@@ -7,4 +7,8 @@ export class FilePermissionWeb extends WebPlugin implements FilePermissionPlugin
     console.log('ECHO', options);
     return options;
   }
+
+  async requestManageAllFilesPermission():Promise<void>{
+    console.log("only android")
+  }
 }

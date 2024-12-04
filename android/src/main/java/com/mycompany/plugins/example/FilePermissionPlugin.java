@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.provider.Settings;
 
 import com.getcapacitor.JSObject;
@@ -29,17 +30,52 @@ public class FilePermissionPlugin extends Plugin {
     @PluginMethod
     public void requestManageAllFilesPermission(PluginCall call) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Context context = getContext();
-            if (!Settings.canDrawOverlays(context)) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                intent.setData(Uri.parse("package:" + context.getPackageName()));
-                context.startActivity(intent);
-                call.success();
+            if (Environment.isExternalStorageManager()) {
+                call.resolve();
             } else {
-                call.reject("Permission already granted");
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                    intent.setData(uri);
+                    startActivityForResult(call, intent, 0);
+//                } else {
+//                    call.resolve();
+//                }
+//                call.reject("MANAGE_EXTERNAL_STORAGE permission is not granted");
             }
         } else {
-            call.reject("Not required for Android versions below 11");
+            call.resolve();
         }
+
     }
+
+//    @PluginMethod
+//    public void requestManageAllFilesPermission(PluginCall call) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            Context context = getContext();
+//            if (!Settings.canDrawOverlays(context)) {
+//                try {
+//                    System.out.println("QUI PRIMERO");
+////                    Uri uri = Uri.parse("package:" );
+//                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, Uri.parse("package:$packageName"));
+//                    System.out.println("QUI SEGUNDO");
+//
+//                    context.startActivity(intent);
+//                    System.out.println("QUI TERCERO");
+//
+//                } catch (Exception ex){
+//                    System.out.println("ENTRO EN CATCH");
+//                    System.out.println(ex);
+//                    Intent intent = new Intent();
+//                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+//                    context.startActivity(intent);
+//                }
+//                call.success();
+//            } else {
+//                call.reject("Permission already granted");
+//            }
+//        } else {
+//            call.reject("Not required for Android versions below 11");
+//        }
+//    }
 }
