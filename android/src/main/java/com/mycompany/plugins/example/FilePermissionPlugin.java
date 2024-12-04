@@ -30,23 +30,20 @@ public class FilePermissionPlugin extends Plugin {
     @PluginMethod
     public void requestManageAllFilesPermission(PluginCall call) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (Environment.isExternalStorageManager()) {
+            if (!Environment.isExternalStorageManager()) {
+                // Launch intent to request the "All files access" permission
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION,Uri.parse("package:$packageName"));
+//                intent.setData( ;
+                getActivity().startActivityForResult(intent, 1);
                 call.resolve();
             } else {
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                    Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
-                    intent.setData(uri);
-                    startActivityForResult(call, intent, 0);
-//                } else {
-//                    call.resolve();
-//                }
-//                call.reject("MANAGE_EXTERNAL_STORAGE permission is not granted");
+                // Permission already granted
+                call.resolve();
             }
         } else {
+            // Permission not required for Android versions below R
             call.resolve();
         }
-
     }
 
 //    @PluginMethod

@@ -1,0 +1,1 @@
+{"version":3,"file":"definitions.js","sourceRoot":"","sources":["../../src/definitions.ts"],"names":[],"mappings":"","sourcesContent":["export interface FilePermissionPlugin {\n  echo(options: { value: string }): Promise<{ value: string }>;\n  requestManageAllFilesPermission():Promise<void>;\n}\n"]}
